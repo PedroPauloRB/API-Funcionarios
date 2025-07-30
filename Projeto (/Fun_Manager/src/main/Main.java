@@ -1,35 +1,51 @@
 package main;
+
 import dao.FuncionarioDAO;
 import model.Funcionario;
 
-import java.util.Scanner;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         FuncionarioDAO dao = new FuncionarioDAO();
-        Scanner sc = new Scanner(System.in);
-        int opcao;
-        do {
-            System.out.println("\n1. Adicionar Funcionário\n2. Listar\n0. Sair");
-            opcao = sc.nextInt();
-            sc.nextLine();
 
-            if (opcao == 1) {
-                System.out.print("Nome: ");
-                String nome = sc.nextLine();
-                System.out.print("Cargo: ");
-                String cargo = sc.nextLine();
-                System.out.print("Salário: ");
-                double salario = sc.nextDouble();
-                dao.adicionar(new Funcionario(nome, cargo, salario));
-                System.out.println("Funcionário adicionado!");
-            } else if (opcao == 2) {
-                for (Funcionario f : dao.listar()) {
-                    System.out.printf("ID: %d | Nome: %s | Cargo: %s | Salário: %.2f\n",
-                            f.getId(), f.getNome(), f.getCargo(), f.getSalario());
-                }
-            }
-        } while (opcao != 0);
-        sc.close();
+        // 1. Adicionando funcionários
+        Funcionario f1 = new Funcionario(1, "Ana", "Gerente", 5000.00);
+        Funcionario f2 = new Funcionario(2, "João", "Analista", 3500.00);
+
+        dao.adicionarFuncionario(f1);
+        dao.adicionarFuncionario(f2);
+
+        // 2. Listando funcionários
+        System.out.println("📋 Lista de funcionários:");
+        listarTodos(dao);
+
+        // 3. Buscando por ID
+        System.out.println("\n🔎 Buscando funcionário com ID 1:");
+        Funcionario buscado = dao.buscarPorId(1);
+        if (buscado != null) {
+            System.out.println(buscado);
+        } else {
+            System.out.println("Funcionário não encontrado.");
+        }
+
+        // 4. Atualizando funcionário
+        Funcionario fAtualizado = new Funcionario(1, "Ana Maria", "Gerente", 5500.00);
+        dao.atualizarFuncionario(fAtualizado);
+
+        System.out.println("\n✏️ Após atualização:");
+        listarTodos(dao);
+
+        // 5. Removendo funcionário
+        dao.removerFuncionario(2);
+        System.out.println("\n❌ Após remoção:");
+        listarTodos(dao);
+    }
+
+    private static void listarTodos(FuncionarioDAO dao) {
+        List<Funcionario> lista = dao.listarFuncionarios();
+        for (Funcionario f : lista) {
+            System.out.println(f);
+        }
     }
 }
